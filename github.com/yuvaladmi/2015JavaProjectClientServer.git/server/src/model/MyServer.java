@@ -1,8 +1,6 @@
 package model;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -10,6 +8,8 @@ import java.util.Observable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import controller.Controller;
 
 
 public class MyServer extends Observable {
@@ -24,13 +24,14 @@ public class MyServer extends Observable {
 	volatile boolean stop;
 	
 	Thread mainServerThread;
-	
+	Controller controller;
 	int clientsHandled=0;
 	
-	public MyServer(int port,ClinetHandler clinetHandler,int numOfClients) {
+	public MyServer(int port,ClinetHandler clinetHandler,int numOfClients,Controller c) {
 		this.port=port;
 		this.clinetHandler=clinetHandler;
 		this.numOfClients=numOfClients;
+		this.controller = c;
 	}
 	
 	
@@ -51,12 +52,10 @@ public class MyServer extends Observable {
 								public void run() {
 									try{										
 										clientsHandled++;
-										setChanged();
-										notifyObservers("\thandling client "+clientsHandled);
+										controller.display("\thandling client "+clientsHandled);
 										clinetHandler.handleClient(someClient.getInputStream(), someClient.getOutputStream());
 										someClient.close();
-										setChanged();
-										notifyObservers("\tdone handling client "+clientsHandled);										
+										controller.display("\tdone handling client "+clientsHandled);										
 									}catch(IOException e){
 										e.printStackTrace();
 									}									
@@ -65,15 +64,15 @@ public class MyServer extends Observable {
 						}
 					}
 					catch (SocketTimeoutException e){
-						setChanged();
-						notifyObservers("no clinet connected...");
+						controller.display("no clinet connected...");
 					} 
 					catch (IOException e) {
 						e.printStackTrace();
+					}finally {
+						((ExecutorService)threadpool).shutdown();
 					}
 				}
-				setChanged();
-				notifyObservers("done accepting new clients.");
+				controller.display("done accepting new clients.");
 			} // end of the mainServerThread task
 		});
 		
@@ -84,37 +83,33 @@ public class MyServer extends Observable {
 	public void close() throws Exception{
 		stop=true;	
 		// do not execute jobs in queue, continue to execute running threads
-		setChanged();
-		notifyObservers("shutting down");
+		controller.display("shutting down");
 		threadpool.shutdown();
 		// wait 10 seconds over and over again until all running jobs have finished
 		boolean allTasksCompleted=false;
 		while(!(allTasksCompleted=threadpool.awaitTermination(10, TimeUnit.SECONDS)));
 		
-		setChanged();
-		notifyObservers("all the tasks have finished");
+		controller.display("all the tasks have finished");
 
 		mainServerThread.join();		
-		setChanged();
-		notifyObservers("main server thread is done");
+		controller.display("main server thread is done");
 		
 		server.close();
-		setChanged();
-		notifyObservers("server is safely closed");
+		controller.display("server is safely closed");
 	}
 	
 	
-	public static void main(String[] args) throws Exception{
-		System.out.println("Server Side");
-		System.out.println("type \"close the server\" to stop it");
-//		MyServer server=new MyServer(5400,new ASCIIArtClientHandler(),10);
-//		server.start();
-		
-		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-		
-		while(!(in.readLine()).equals("close the server"));
-		
-//		server.close();		
-		
-	}
+//	public static void main(String[] args) throws Exception{
+//		System.out.println("Server Side");
+//		System.out.println("type \"close the server\" to stop it");
+////		MyServer server=new MyServer(5400,new ASCIIArtClientHandler(),10);
+////		server.start();
+//		
+//		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
+//		
+//		while(!(in.readLine()).equals("close the server"));
+//		
+////		server.close();		
+//		
+//	}
 }
