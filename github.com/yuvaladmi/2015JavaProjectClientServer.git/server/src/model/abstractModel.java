@@ -8,7 +8,6 @@ import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import controller.Controller;
-import presenter.Properties;
 
 public abstract class abstractModel extends Observable implements Model {
 

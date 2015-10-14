@@ -3,7 +3,6 @@ package model;
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
-import presenter.Properties;
 
 public interface Model {
     /**

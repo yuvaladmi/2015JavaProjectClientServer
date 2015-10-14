@@ -12,8 +12,8 @@ public class RunServer {
 	public static void main(String[] args) {
 		Controller controller = new Controller();
 		Model model = new Maze3dModel(controller);
-		Maze3dClientHandler mazeClientHandle = new Maze3dClientHandler(model);
 		View view = new MyView(controller);
+		Maze3dClientHandler mazeClientHandle = new Maze3dClientHandler(view);
 		controller.setMaze(mazeClientHandle);
 		controller.setM(model);
 		controller.setV(view);

@@ -2,14 +2,14 @@ package view;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.net.Socket;
-
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
 import controller.Controller;
-import model.MyServer;
 
 public class MyView extends AbView {
 
@@ -36,25 +36,27 @@ public class MyView extends AbView {
 	}
 
 	@Override
-	public void generateProtocol(BufferedReader inFromClient, PrintWriter outToServer) {
+	public void generateProtocol(InputStream inFromClient, OutputStream outToServer) {
 
 		try {
+			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out=new PrintWriter(outToServer);
 			String name, temp;
 			int x, y, z;
-			outToServer.println("What is the maze name?");
-			outToServer.flush();
-			name = (inFromClient.readLine().split(": ")[1]);
-			outToServer.println("How many levels?");
-			outToServer.flush();
-			temp = (inFromClient.readLine().split(": ")[1]);
+			out.println("What is the maze name?");
+			out.flush();
+			name = (in.readLine().split(": ")[1]);
+			out.println("How many levels?");
+			out.flush();
+			temp = (in.readLine().split(": ")[1]);
 			x = Integer.parseInt(temp);
-			outToServer.println("How many lines?");
-			outToServer.flush();
-			temp = (inFromClient.readLine().split(": ")[1]);
+			out.println("How many lines?");
+			out.flush();
+			temp = (in.readLine().split(": ")[1]);
 			y = Integer.parseInt(temp);
-			outToServer.println("How many columns?");
-			outToServer.flush();
-			temp = (inFromClient.readLine().split(": ")[1]);
+			out.println("How many columns?");
+			out.flush();
+			temp = (in.readLine().split(": ")[1]);
 			z = Integer.parseInt(temp);
 			controller.update(("generate" + name + " " + x + " " + y + " " + z).split(" "));
 			Maze3d maze = controller.getMaze(name);
@@ -66,22 +68,24 @@ public class MyView extends AbView {
 	}
 
 	@Override
-	public void getMazeProtocol(BufferedReader inFromClient, PrintWriter outToServer) {
+	public void getMazeProtocol(InputStream inFromClient, OutputStream outToServer) {
 		try {
+			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out=new PrintWriter(outToServer);
 			String name;
-			outToServer.println("What is the maze name?");
-			name = (inFromClient.readLine().split(": ")[1]);
+			out.println("What is the maze name?");
+			name = (in.readLine().split(": ")[1]);
 			Maze3d maze = controller.getMaze(name);
 			if (maze == null) {
 				System.out.println("error");
 			} else {
 				byte[] buffer = maze.toByteArray();
 				for (byte b : buffer) {
-					outToServer.write((int) b);
-					outToServer.flush();
+					out.write((int) b);
+					out.flush();
 				}
-				outToServer.write(127);
-				outToServer.flush();
+				out.write(127);
+				out.flush();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -90,15 +94,18 @@ public class MyView extends AbView {
 	}
 
 	@Override
-	public void solveProtocol(BufferedReader inFromClient, PrintWriter outToServer) {
+	public void solveProtocol(InputStream inFromClient, OutputStream outToServer) {
 		try {
+			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out=new PrintWriter(outToServer);
+			
 			String name, algo;
-			outToServer.println("What is the maze name?");
-			outToServer.flush();
-			name = (inFromClient.readLine().split(": ")[1]);
-			outToServer.println("What is the algorithm name?");
-			outToServer.flush();
-			algo = (inFromClient.readLine().split(": ")[1]);
+			out.println("What is the maze name?");
+			out.flush();
+			name = (in.readLine().split(": ")[1]);
+			out.println("What is the algorithm name?");
+			out.flush();
+			algo = (in.readLine().split(": ")[1]);
 			controller.update(("solve" + name + " " + algo).split(" "));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -108,20 +115,23 @@ public class MyView extends AbView {
 	}
 
 	@Override
-	public void getSolveProtocol(BufferedReader inFromClient, PrintWriter outToServer) {
+	public void getSolveProtocol(InputStream inFromClient, OutputStream outToServer) {
 		try {
+			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out=new PrintWriter(outToServer);
+			
 			String name;
-			outToServer.println("What is the maze name?");
-			outToServer.flush();
-			name = (inFromClient.readLine().split(": ")[1]);
+			out.println("What is the maze name?");
+			out.flush();
+			name = (in.readLine().split(": ")[1]);
 			Solution<Position> solution = controller.getSolution(name);
 			String solutionStr = solution.toString();
 			if(solution != null){
-				outToServer.write(solutionStr);
-				outToServer.flush();
+				out.write(solutionStr);
+				out.flush();
 			}
-			outToServer.write(-1);
-			outToServer.flush();
+			out.write(-1);
+			out.flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
