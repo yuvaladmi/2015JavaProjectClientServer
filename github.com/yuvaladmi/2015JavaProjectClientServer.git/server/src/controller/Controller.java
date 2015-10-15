@@ -6,15 +6,22 @@ import algorithms.search.Solution;
 import model.Maze3dClientHandler;
 import model.Model;
 import model.MyServer;
+import view.ServerWindow;
 import view.View;
 
 public class Controller {
 
 	Model m;
 	View v;
+	ServerWindow sw;
 	MyServer server;
 	Maze3dClientHandler maze;
+	Properties properties;
 
+	public Controller() {
+		this.properties=new Properties();
+		
+	}
 
 	public void start() {
 		try {
@@ -50,7 +57,15 @@ public class Controller {
 	}
 	
 	public void display(String str){
-		v.display(str);
+		sw.displayPopUp(str);
+	}
+
+	public ServerWindow getSw() {
+		return sw;
+	}
+
+	public void setSw(ServerWindow sw) {
+		this.sw = sw;
 	}
 
 	public Maze3d getMaze(String str) {
@@ -70,7 +85,7 @@ public class Controller {
 	
 	public void setMaze(Maze3dClientHandler maze) {
 		this.maze = maze;
-		server = new MyServer(5400, this.maze, 9,this);
+		server = new MyServer(properties.getPort(), this.maze,properties.getMaxClients(),this);
 	}
 	
 	public Model getM() {
