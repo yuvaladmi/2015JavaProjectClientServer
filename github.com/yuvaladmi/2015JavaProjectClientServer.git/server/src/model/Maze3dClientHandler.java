@@ -24,13 +24,7 @@ public class Maze3dClientHandler implements ClinetHandler {
 			PrintWriter out = new PrintWriter(outToClient);
 			String line;
 			while (!(line = in.readLine()).endsWith("exit")) {
-				if (line.equals("generate new maze")) {
-					out.println("ok");
-					out.flush();
-					view.generateProtocol(inFromClient, outToClient);
-					out.println("done");
-					out.flush();
-				}
+				System.out.println(line);
 				switch (line) {
 				case "generate new maze":
 					out.println("ok");
@@ -50,6 +44,7 @@ public class Maze3dClientHandler implements ClinetHandler {
 					out.println("ok");
 					out.flush();
 					view.solveProtocol(inFromClient, outToClient);
+					System.out.println("done solve client");
 					out.println("done");
 					out.flush();
 					break;

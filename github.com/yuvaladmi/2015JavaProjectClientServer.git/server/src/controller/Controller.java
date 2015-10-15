@@ -15,9 +15,6 @@ public class Controller {
 	MyServer server;
 	Maze3dClientHandler maze;
 
-	public Controller() {
-		server = new MyServer(5400, maze, 10,this);
-	}
 
 	public void start() {
 		try {
@@ -38,17 +35,18 @@ public class Controller {
 	}
 
 
-	public void update(String[] str) {
+	public boolean update(String[] str) {
 		switch (str[0]) {
 		case "generate":
 			m.generateMaze(str);
-			break;
+			System.out.println("update return");
+			return true;
 		case "solve":
 			m.solve(str);
-			break;
-		default:
-			break;
+			System.out.println("update return solution");
+			return true;
 		}
+		return false;
 	}
 	
 	public void display(String str){
@@ -62,8 +60,8 @@ public class Controller {
 	}
 
 	public Solution<Position> getSolution(String name) {
-		Solution<Position> solution = m.bringSolution(name);
-		return solution;
+		System.out.println("get Sol");
+		return m.gethSol().get(m.gethMaze().get(name));
 	}
 
 	public Maze3dClientHandler getMaze() {
@@ -72,6 +70,7 @@ public class Controller {
 	
 	public void setMaze(Maze3dClientHandler maze) {
 		this.maze = maze;
+		server = new MyServer(5400, this.maze, 9,this);
 	}
 	
 	public Model getM() {

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.HashMap;
+import java.util.Stack;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -52,7 +53,7 @@ public class Maze3dModel extends abstractModel{
 
 	
 	@Override
-	public void generateMaze(String[] arr) {
+	public boolean generateMaze(String[] arr) {
 		int x = Integer.parseInt(arr[2]);
 		int y = Integer.parseInt(arr[3]);
 		int z = Integer.parseInt(arr[4]);
@@ -70,12 +71,17 @@ public class Maze3dModel extends abstractModel{
 		try {
 			hMaze.put(name, fCallMaze.get());
 			hPosition.put(name, fCallMaze.get().getStart());
+			System.out.println("generate done");
+			return true;
+			
 		} catch (InterruptedException | ExecutionException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 //		String[] messege = ("maze is ready" + name).split(" ");
 //		controller.update(messege);
+		
 	}
 
 	
@@ -90,19 +96,20 @@ public class Maze3dModel extends abstractModel{
 
 	
 	@Override
-	public void solve(String[] arr) {
+	public boolean solve(String[] arr) {
 		String nameAlg =arr[arr.length-1];
 		String name = arr[arr.length-2];
-		Maze3d tempMaze = hMaze.get(name);
-		if ((hSol.get(tempMaze)) != null) {
-			return;
-		}
+		System.out.println(name);
+		Maze3d m = hMaze.get(name);
+//		if ((hSol.get(tempMaze)) != null) {
+//			return true;
+//		}
+		System.out.println("swsws");
 		Future<Solution<Position>> fCallSolution = threadpool.submit(new Callable<Solution<Position>>() {
 
 			@Override
 			public Solution<Position> call() throws Exception {
-
-				Maze3d m = hMaze.get(name);
+				System.out.println("call solution");
 				SearchableMaze sMaze = new SearchableMaze(m);
 				CommonSearcher<Position> cs;
 				Solution<Position> s = new Solution<Position>();
@@ -118,26 +125,32 @@ public class Maze3dModel extends abstractModel{
 				case "BFS":
 					cs = new BFS<Position>();
 					s = cs.search(sMaze);
+					Stack<Position> temp = s.getSolution();
+					System.out.println(temp);
 					break;
+					
 				}
 				return s;
 			}
 		});
 		try {
-			hSol.put(tempMaze, fCallSolution.get());
+			hSol.put(m, fCallSolution.get());
+			System.out.println("solve done");
+			return true;
 		} catch (InterruptedException | ExecutionException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 
 	
 	@Override
 	public Solution<Position> bringSolution(String name) {
+		System.out.println("solution " + name);
 		Maze3d maze = hMaze.get(name);
-		// Solution<Position> s = hSol.get(maze);
+		Solution<Position> sol;
 		if (maze != null) {
-			Solution<Position> sol = hSol.get(maze);
+			sol = hSol.get(maze);
 			return sol;
 		}
 		return null;
@@ -153,10 +166,8 @@ public class Maze3dModel extends abstractModel{
 			objMaze.flush();
 			objMaze.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -198,4 +209,6 @@ public class Maze3dModel extends abstractModel{
 			e.printStackTrace();
 		}
 	}
+	
+	
 }

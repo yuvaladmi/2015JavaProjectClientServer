@@ -1,5 +1,7 @@
 package model;
 
+import java.util.HashMap;
+
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
@@ -9,7 +11,7 @@ public interface Model {
 	 * This method create a new Maze3d in a thread. All the mazes saved in an
 	 * HashMap.
 	 */
-    public void generateMaze(String[] arr);
+    public boolean generateMaze(String[] arr);
     /**
 	 * This method gets a Maze name and sends the presenter this maze.
 	 * @return Maze3d
@@ -19,8 +21,9 @@ public interface Model {
     /**
 	 * This method gets a name of a maze and solving algorithm and solves it in
 	 * a Thread. All the solutions saved in an HashMap.
+     * @return 
 	 */
-    public void solve(String[] arr);
+    public boolean solve(String[] arr);
     /**
 	 * This method gets a name of a maze and sends the Controller its solution
 	 */
@@ -38,5 +41,8 @@ public interface Model {
 	 * This method closes all the open threads.
 	 */
     public void close();
-   
+    public HashMap<Maze3d, Solution<Position>> gethSol();
+
+	public void sethSol(HashMap<Maze3d, Solution<Position>> hSol);
+	public HashMap<String, Maze3d> gethMaze();
 }

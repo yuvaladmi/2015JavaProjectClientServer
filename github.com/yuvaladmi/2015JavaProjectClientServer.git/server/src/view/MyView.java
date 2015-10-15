@@ -6,6 +6,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Iterator;
+import java.util.Stack;
+
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
@@ -13,10 +16,10 @@ import controller.Controller;
 
 public class MyView extends AbView {
 
-	
 	public MyView(Controller c) {
 		this.controller = c;
 	}
+
 	@Override
 	public void start() {
 		controller.start();
@@ -31,7 +34,7 @@ public class MyView extends AbView {
 
 	@Override
 	public void display(String s) {
-		// TODO Auto-generated method stub
+		System.out.println(s);
 
 	}
 
@@ -39,8 +42,8 @@ public class MyView extends AbView {
 	public void generateProtocol(InputStream inFromClient, OutputStream outToServer) {
 
 		try {
-			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
-			PrintWriter out=new PrintWriter(outToServer);
+			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out = new PrintWriter(outToServer);
 			String name, temp;
 			int x, y, z;
 			out.println("What is the maze name?");
@@ -58,10 +61,12 @@ public class MyView extends AbView {
 			out.flush();
 			temp = (in.readLine().split(": ")[1]);
 			z = Integer.parseInt(temp);
-			controller.update(("generate" + name + " " + x + " " + y + " " + z).split(" "));
-			Maze3d maze = controller.getMaze(name);
+			controller.update(("generate " + name + " " + x + " " + y + " " + z).split(" "));
+			// out.println("done");
+			// out.flush();
+			// Maze3d maze = controller.getMaze(name);
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -70,12 +75,16 @@ public class MyView extends AbView {
 	@Override
 	public void getMazeProtocol(InputStream inFromClient, OutputStream outToServer) {
 		try {
-			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
-			PrintWriter out=new PrintWriter(outToServer);
+
+			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out = new PrintWriter(outToServer);
 			String name;
 			out.println("What is the maze name?");
-			name = (in.readLine().split(": ")[1]);
+			out.flush();
+			name = in.readLine();
+			System.out.println(name);
 			Maze3d maze = controller.getMaze(name);
+
 			if (maze == null) {
 				System.out.println("error");
 			} else {
@@ -96,9 +105,9 @@ public class MyView extends AbView {
 	@Override
 	public void solveProtocol(InputStream inFromClient, OutputStream outToServer) {
 		try {
-			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
-			PrintWriter out=new PrintWriter(outToServer);
-			
+			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out = new PrintWriter(outToServer);
+
 			String name, algo;
 			out.println("What is the maze name?");
 			out.flush();
@@ -106,9 +115,9 @@ public class MyView extends AbView {
 			out.println("What is the algorithm name?");
 			out.flush();
 			algo = (in.readLine().split(": ")[1]);
-			controller.update(("solve" + name + " " + algo).split(" "));
+			System.out.println(algo);
+			controller.update(("solve " + name + " " + algo).split(" "));
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -117,23 +126,33 @@ public class MyView extends AbView {
 	@Override
 	public void getSolveProtocol(InputStream inFromClient, OutputStream outToServer) {
 		try {
-			BufferedReader in=new BufferedReader(new InputStreamReader(inFromClient));
-			PrintWriter out=new PrintWriter(outToServer);
-			
-			String name;
+			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
+			PrintWriter out = new PrintWriter(outToServer);
+
+			String name,buffer;
 			out.println("What is the maze name?");
 			out.flush();
 			name = (in.readLine().split(": ")[1]);
+			System.out.println(name);
 			Solution<Position> solution = controller.getSolution(name);
-			String solutionStr = solution.toString();
-			if(solution != null){
-				out.write(solutionStr);
+			Stack<Position> sol = solution.getSolution();
+			Iterator<Position> itr = sol.iterator();
+			Position p = new Position(0,0,0);
+			while(itr.hasNext()){
+				p = itr.next();
+				buffer = p.toString();
+				out.println(buffer);
 				out.flush();
 			}
-			out.write(-1);
+//			while (!sol.isEmpty()) {
+//				Position p = sol.pop();
+//				buffer = p.toString();
+//				out.println(buffer);
+//				out.flush();
+//			}
+			out.println("yuval");
 			out.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

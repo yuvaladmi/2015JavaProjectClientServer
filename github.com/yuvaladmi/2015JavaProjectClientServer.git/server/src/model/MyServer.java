@@ -64,13 +64,14 @@ public class MyServer extends Observable {
 						}
 					}
 					catch (SocketTimeoutException e){
-						controller.display("no clinet connected...");
+//						controller.display("no clinet connected...");
 					} 
 					catch (IOException e) {
 						e.printStackTrace();
-					}finally {
-						((ExecutorService)threadpool).shutdown();
 					}
+//					}finally {
+//						((ExecutorService)threadpool).shutdown();
+//					}
 				}
 				controller.display("done accepting new clients.");
 			} // end of the mainServerThread task
@@ -97,19 +98,5 @@ public class MyServer extends Observable {
 		server.close();
 		controller.display("server is safely closed");
 	}
-	
-	
-//	public static void main(String[] args) throws Exception{
-//		System.out.println("Server Side");
-//		System.out.println("type \"close the server\" to stop it");
-////		MyServer server=new MyServer(5400,new ASCIIArtClientHandler(),10);
-////		server.start();
-//		
-//		BufferedReader in=new BufferedReader(new InputStreamReader(System.in));
-//		
-//		while(!(in.readLine()).equals("close the server"));
-//		
-////		server.close();		
-//		
-//	}
+
 }
