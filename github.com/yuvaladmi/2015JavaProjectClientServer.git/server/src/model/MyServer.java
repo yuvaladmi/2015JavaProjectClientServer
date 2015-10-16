@@ -36,6 +36,7 @@ public class MyServer extends Observable {
 	
 	
 	public void start() throws Exception{
+		controller.display("server connected");
 		server=new ServerSocket(port);
 		server.setSoTimeout(10*1000);
 		threadpool=Executors.newFixedThreadPool(numOfClients);
@@ -52,10 +53,11 @@ public class MyServer extends Observable {
 								public void run() {
 									try{										
 										clientsHandled++;
-										controller.display("\thandling client "+clientsHandled);
+										
+										controller.display("handling client "+clientsHandled);
 										clinetHandler.handleClient(someClient.getInputStream(), someClient.getOutputStream());
 										someClient.close();
-										controller.display("\tdone handling client "+clientsHandled);										
+										controller.display("done handling client "+clientsHandled);										
 									}catch(IOException e){
 										e.printStackTrace();
 									}									
@@ -84,19 +86,21 @@ public class MyServer extends Observable {
 	public void close() throws Exception{
 		stop=true;	
 		// do not execute jobs in queue, continue to execute running threads
-		controller.display("shutting down");
+//		controller.display("shutting down");
 		threadpool.shutdown();
 		// wait 10 seconds over and over again until all running jobs have finished
 		boolean allTasksCompleted=false;
 		while(!(allTasksCompleted=threadpool.awaitTermination(10, TimeUnit.SECONDS)));
 		
-		controller.display("all the tasks have finished");
+//		controller.display("all the tasks have finished");
 
 		mainServerThread.join();		
-		controller.display("main server thread is done");
+//		controller.display("main server thread is done");
 		
 		server.close();
-		controller.display("server is safely closed");
+//		controller.display("server is safely closed");
 	}
 
+	
+	
 }

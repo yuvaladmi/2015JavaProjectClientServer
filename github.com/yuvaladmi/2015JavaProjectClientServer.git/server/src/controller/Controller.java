@@ -1,5 +1,10 @@
 package controller;
 
+import java.beans.XMLDecoder;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 import algorithms.mazeGenerators.Maze3d;
 import algorithms.mazeGenerators.Position;
 import algorithms.search.Solution;
@@ -18,13 +23,23 @@ public class Controller {
 	Maze3dClientHandler maze;
 	Properties properties;
 
-	public Controller() {
-		this.properties=new Properties();
+	public Controller(Properties p) {
+		this.properties= p;
 		
 	}
 
 	public void start() {
 		try {
+		    XMLDecoder xmlD = new XMLDecoder(new BufferedInputStream(new FileInputStream("serverProperties.xml")));
+		    properties = (Properties) xmlD.readObject();
+		    xmlD.close();
+		} catch (FileNotFoundException e) {
+		    // TODO Auto-generated catch block
+		    e.printStackTrace();
+		}
+		
+		try {
+			server = new MyServer(properties.getPort(), this.maze,properties.getMaxClients(),this);
 			server.start();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -73,6 +88,7 @@ public class Controller {
 		return maze;
 
 	}
+	
 
 	public Solution<Position> getSolution(String name) {
 		System.out.println("get Sol");
@@ -85,7 +101,7 @@ public class Controller {
 	
 	public void setMaze(Maze3dClientHandler maze) {
 		this.maze = maze;
-		server = new MyServer(properties.getPort(), this.maze,properties.getMaxClients(),this);
+		
 	}
 	
 	public Model getM() {

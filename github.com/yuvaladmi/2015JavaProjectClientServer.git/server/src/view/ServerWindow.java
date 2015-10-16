@@ -1,17 +1,24 @@
 package view;
 
-import javax.sql.rowset.serial.SerialException;
+import java.beans.XMLEncoder;
+import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 import controller.Controller;
+import controller.Properties;
 
 public class ServerWindow extends BasicWindow {
 	protected Controller controller;
@@ -26,12 +33,22 @@ public class ServerWindow extends BasicWindow {
 		this.controller = controller;
 		connected = new Button(shell, SWT.PUSH);
 		disconnected = new Button(shell, SWT.PUSH);
-		connectedImage = new Image(display, "resources/connected.jpg");
+		connectedImage = new Image(display, "resources/connected.png");
 		disconnectedImage = new Image(display, "resources/disconnected.jpg");
 	}
 
 	@Override
 	public void displayPopUp(String str) {
+		Display.getDefault().syncExec(new Runnable() {
+			
+			@Override
+		    public void run() {
+				text.append(str+"\n");
+		    		
+		    	
+		    }
+		});
+		
 	}
 
 	@Override
@@ -43,6 +60,14 @@ public class ServerWindow extends BasicWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
+				Properties p=new Properties();
+				try {
+					XMLEncoder xml = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("serverProperties.xml")));
+					xml.writeObject(p);
+					xml.flush();
+					xml.close();
+				} catch (FileNotFoundException e) {}
+				
 				controller.start();
 
 			}
@@ -54,13 +79,20 @@ public class ServerWindow extends BasicWindow {
 			}
 		});
 
+		shell.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent arg0) {
+				controller.stop();
+				
+			}
+		});
 		disconnected.setLayoutData(new GridData(SWT.TOP, SWT.NONE, false, false, 2, 2));
 		disconnected.setImage(disconnectedImage);
 		disconnected.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				controller.stop();
 				shell.dispose();
 			}
 			
