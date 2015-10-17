@@ -20,6 +20,15 @@ import org.eclipse.swt.widgets.Text;
 import controller.Controller;
 import controller.Properties;
 
+/**
+ * 
+ * @author Yuval Admi & Afek Ben Simon
+ * @since 14.10.2015
+ *
+ *        This class extends BasicWindow, Open a window which offers to connect
+ *        the server, disconnect the server and shows which clients are
+ *        connected or disconnected
+ */
 public class ServerWindow extends BasicWindow {
 	protected Controller controller;
 	protected Button connected;
@@ -40,15 +49,14 @@ public class ServerWindow extends BasicWindow {
 	@Override
 	public void displayPopUp(String str) {
 		Display.getDefault().syncExec(new Runnable() {
-			
+
 			@Override
-		    public void run() {
-				text.append(str+"\n");
-		    		
-		    	
-		    }
+			public void run() {
+				text.append(str + "\n");
+
+			}
 		});
-		
+
 	}
 
 	@Override
@@ -60,14 +68,17 @@ public class ServerWindow extends BasicWindow {
 
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				Properties p=new Properties();
+				//writing the properties into xml file
+				Properties p = new Properties();
 				try {
-					XMLEncoder xml = new XMLEncoder(new BufferedOutputStream(new FileOutputStream("serverProperties.xml")));
+					XMLEncoder xml = new XMLEncoder(
+							new BufferedOutputStream(new FileOutputStream("serverProperties.xml")));
 					xml.writeObject(p);
 					xml.flush();
 					xml.close();
-				} catch (FileNotFoundException e) {}
-				
+				} catch (FileNotFoundException e) {
+				}
+
 				controller.start();
 
 			}
@@ -80,33 +91,32 @@ public class ServerWindow extends BasicWindow {
 		});
 
 		shell.addDisposeListener(new DisposeListener() {
-			
+
 			@Override
 			public void widgetDisposed(DisposeEvent arg0) {
 				controller.stop();
-				
+
 			}
 		});
 		disconnected.setLayoutData(new GridData(SWT.TOP, SWT.NONE, false, false, 2, 2));
 		disconnected.setImage(disconnectedImage);
 		disconnected.addSelectionListener(new SelectionListener() {
-			
+
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				shell.dispose();
 			}
-			
+
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
 		text = new Text(shell, SWT.MULTI | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		text.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 3));
-		
 
 	}
-	
+
 }

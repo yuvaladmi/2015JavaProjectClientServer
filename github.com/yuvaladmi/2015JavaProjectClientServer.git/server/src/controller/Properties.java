@@ -1,11 +1,12 @@
 package controller;
 
-import java.beans.XMLEncoder;
-import java.io.BufferedOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.Serializable;
-
+/**
+ * 
+ * @author Yuval Admi & Afek Ben Simon
+ * This class implements Serializable, has Getters & Setters to its parameters
+ *
+ */
 public class Properties implements Serializable{
 
 	/**

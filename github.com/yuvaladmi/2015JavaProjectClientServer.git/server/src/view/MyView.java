@@ -40,7 +40,7 @@ public class MyView extends AbView {
 
 	@Override
 	public void generateProtocol(InputStream inFromClient, OutputStream outToServer) {
-
+		// Asking the client the required parameters to generate a 3d maze
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
 			PrintWriter out = new PrintWriter(outToServer);
@@ -62,9 +62,6 @@ public class MyView extends AbView {
 			temp = (in.readLine().split(": ")[1]);
 			z = Integer.parseInt(temp);
 			controller.update(("generate " + name + " " + x + " " + y + " " + z).split(" "));
-			// out.println("done");
-			// out.flush();
-			// Maze3d maze = controller.getMaze(name);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -74,8 +71,8 @@ public class MyView extends AbView {
 
 	@Override
 	public void getMazeProtocol(InputStream inFromClient, OutputStream outToServer) {
+		//Asking the client required parameters for pulling out a maze and sending it to the client 
 		try {
-
 			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
 			PrintWriter out = new PrintWriter(outToServer);
 			String name;
@@ -89,7 +86,7 @@ public class MyView extends AbView {
 				System.out.println("error");
 			} else {
 				byte[] buffer = maze.toByteArray();
-				for (byte b : buffer) {
+				for (byte b : buffer) {//sending the maze byte by byte
 					out.write((int) b);
 					out.flush();
 				}
@@ -104,6 +101,7 @@ public class MyView extends AbView {
 
 	@Override
 	public void solveProtocol(InputStream inFromClient, OutputStream outToServer) {
+		//Asking the client required parameters to solve a 3d maze
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
 			PrintWriter out = new PrintWriter(outToServer);
@@ -125,11 +123,12 @@ public class MyView extends AbView {
 
 	@Override
 	public void getSolveProtocol(InputStream inFromClient, OutputStream outToServer) {
+		//Asking the client required parameters to pull out a solution and send it to the client
 		try {
 			BufferedReader in = new BufferedReader(new InputStreamReader(inFromClient));
 			PrintWriter out = new PrintWriter(outToServer);
 
-			String name,buffer;
+			String name, buffer;
 			out.println("What is the maze name?");
 			out.flush();
 			name = (in.readLine().split(": ")[1]);
@@ -137,20 +136,14 @@ public class MyView extends AbView {
 			Solution<Position> solution = controller.getSolution(name);
 			Stack<Position> sol = solution.getSolution();
 			Iterator<Position> itr = sol.iterator();
-			Position p = new Position(0,0,0);
-			while(itr.hasNext()){
+			Position p = new Position(0, 0, 0);
+			while (itr.hasNext()) {//scanning the Stack with an iterator, sending the solution 
 				p = itr.next();
 				buffer = p.toString();
 				out.println(buffer);
 				out.flush();
 			}
-//			while (!sol.isEmpty()) {
-//				Position p = sol.pop();
-//				buffer = p.toString();
-//				out.println(buffer);
-//				out.flush();
-//			}
-			out.println("yuval");
+			out.println("-1");
 			out.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

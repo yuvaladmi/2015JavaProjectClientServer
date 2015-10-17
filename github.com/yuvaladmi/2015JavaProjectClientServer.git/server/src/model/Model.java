@@ -41,8 +41,8 @@ public interface Model {
 	 * This method closes all the open threads.
 	 */
     public void close();
+    
     public HashMap<Maze3d, Solution<Position>> gethSol();
-
 	public void sethSol(HashMap<Maze3d, Solution<Position>> hSol);
 	public HashMap<String, Maze3d> gethMaze();
 }

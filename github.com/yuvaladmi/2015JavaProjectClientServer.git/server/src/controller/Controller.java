@@ -13,7 +13,13 @@ import model.Model;
 import model.MyServer;
 import view.ServerWindow;
 import view.View;
-
+/**
+ * 
+ * @author Yuval Admi & Afek Ben Simon
+ *
+ *        This class should get an information what we want to do from the View,
+ *        send it to the Model, wait for an answer and send to the View back.
+ */
 public class Controller {
 
 	Model m;
@@ -22,12 +28,17 @@ public class Controller {
 	MyServer server;
 	Maze3dClientHandler maze;
 	Properties properties;
-
+/**
+ * CTOR
+ * @param p
+ */
 	public Controller(Properties p) {
 		this.properties= p;
 		
 	}
-
+/**
+ * Starting the server
+ */
 	public void start() {
 		try {
 		    XMLDecoder xmlD = new XMLDecoder(new BufferedInputStream(new FileInputStream("serverProperties.xml")));
@@ -46,9 +57,12 @@ public class Controller {
 			e.printStackTrace();
 		}
 	}
-	
+	/**
+	 * Stopping the model and the server
+	 */
 	public void stop(){
 		try {
+			m.close();
 			server.close();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -56,7 +70,11 @@ public class Controller {
 		}
 	}
 
-
+/**
+ * Getting a command from the view and send it to the model
+ * @param str
+ * @return true when we done doing the command
+ */
 	public boolean update(String[] str) {
 		switch (str[0]) {
 		case "generate":
@@ -91,7 +109,6 @@ public class Controller {
 	
 
 	public Solution<Position> getSolution(String name) {
-		System.out.println("get Sol");
 		return m.gethSol().get(m.gethMaze().get(name));
 	}
 

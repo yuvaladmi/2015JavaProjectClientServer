@@ -8,11 +8,20 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import view.View;
-
+/**
+ * 
+ * @author Yuval Admi & Afek Ben Simon
+ * @since 10.10.2015
+ * This class implements ClientHandler
+ *
+ */
 public class Maze3dClientHandler implements ClinetHandler {
 
 	View view;
-
+/**
+ * CTOR
+ * @param v
+ */
 	public Maze3dClientHandler(View v) {
 		view = v;
 	}
@@ -24,7 +33,7 @@ public class Maze3dClientHandler implements ClinetHandler {
 			PrintWriter out = new PrintWriter(outToClient);
 			String line;
 			while (!(line = in.readLine()).endsWith("exit")) {
-				System.out.println(line);
+				//getting commands from the client until he sends 'exit'
 				switch (line) {
 				case "generate new maze":
 					out.println("ok");

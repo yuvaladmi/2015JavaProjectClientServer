@@ -71,7 +71,6 @@ public class Maze3dModel extends abstractModel{
 		try {
 			hMaze.put(name, fCallMaze.get());
 			hPosition.put(name, fCallMaze.get().getStart());
-			System.out.println("generate done");
 			return true;
 			
 		} catch (InterruptedException | ExecutionException e) {
@@ -79,8 +78,6 @@ public class Maze3dModel extends abstractModel{
 			e.printStackTrace();
 			return false;
 		}
-//		String[] messege = ("maze is ready" + name).split(" ");
-//		controller.update(messege);
 		
 	}
 
@@ -101,10 +98,9 @@ public class Maze3dModel extends abstractModel{
 		String name = arr[arr.length-2];
 		System.out.println(name);
 		Maze3d m = hMaze.get(name);
-//		if ((hSol.get(tempMaze)) != null) {
-//			return true;
-//		}
-		System.out.println("swsws");
+		if ((hSol.get(m)) != null) {
+			return true;
+		}
 		Future<Solution<Position>> fCallSolution = threadpool.submit(new Callable<Solution<Position>>() {
 
 			@Override
@@ -135,7 +131,6 @@ public class Maze3dModel extends abstractModel{
 		});
 		try {
 			hSol.put(m, fCallSolution.get());
-			System.out.println("solve done");
 			return true;
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
@@ -193,8 +188,7 @@ public class Maze3dModel extends abstractModel{
 	@Override
 	public void close() {
 		saveZip();
-		setChanged();
-		notifyObservers("shutting down");
+		controller.display("shutting down model");
 		threadpool.shutdown();
 		// wait 10 seconds over and over again until all running jobs have
 		// finished
@@ -203,8 +197,7 @@ public class Maze3dModel extends abstractModel{
 			boolean allTasksCompleted = false;
 			while (!(allTasksCompleted = threadpool.awaitTermination(10, TimeUnit.SECONDS)))
 				;
-			setChanged();
-			notifyObservers("Server is safely closed");
+			controller.display("Server model is safely closed");
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
