@@ -96,7 +96,6 @@ public class Maze3dModel extends abstractModel{
 	public boolean solve(String[] arr) {
 		String nameAlg =arr[arr.length-1];
 		String name = arr[arr.length-2];
-		System.out.println(name);
 		Maze3d m = hMaze.get(name);
 		if ((hSol.get(m)) != null) {
 			return true;
@@ -105,7 +104,6 @@ public class Maze3dModel extends abstractModel{
 
 			@Override
 			public Solution<Position> call() throws Exception {
-				System.out.println("call solution");
 				SearchableMaze sMaze = new SearchableMaze(m);
 				CommonSearcher<Position> cs;
 				Solution<Position> s = new Solution<Position>();
@@ -187,7 +185,6 @@ public class Maze3dModel extends abstractModel{
 	
 	@Override
 	public void close() {
-		saveZip();
 		controller.display("shutting down model");
 		threadpool.shutdown();
 		// wait 10 seconds over and over again until all running jobs have

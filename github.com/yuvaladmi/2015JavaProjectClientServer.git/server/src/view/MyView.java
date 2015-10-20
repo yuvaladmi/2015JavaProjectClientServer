@@ -132,7 +132,6 @@ public class MyView extends AbView {
 			out.println("What is the maze name?");
 			out.flush();
 			name = (in.readLine().split(": ")[1]);
-			System.out.println(name);
 			Solution<Position> solution = controller.getSolution(name);
 			Stack<Position> sol = solution.getSolution();
 			Iterator<Position> itr = sol.iterator();

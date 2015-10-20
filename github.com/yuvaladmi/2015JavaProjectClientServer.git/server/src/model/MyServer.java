@@ -36,7 +36,7 @@ public class MyServer extends Observable {
 	public void start() throws Exception {
 		controller.display("server connected");
 		server = new ServerSocket(port);
-		server.setSoTimeout(10 * 1000);
+		server.setSoTimeout(5 * 1000);
 		threadpool = Executors.newFixedThreadPool(numOfClients);
 
 		mainServerThread = new Thread(new Runnable() {
@@ -53,8 +53,7 @@ public class MyServer extends Observable {
 										clientsHandled++;
 
 										controller.display("handling client " + clientsHandled);
-										clinetHandler.handleClient(someClient.getInputStream(),
-												someClient.getOutputStream());
+										clinetHandler.handleClient(someClient.getInputStream(),	someClient.getOutputStream());
 										someClient.close();
 										controller.display("done handling client " + clientsHandled);
 									} catch (IOException e) {
